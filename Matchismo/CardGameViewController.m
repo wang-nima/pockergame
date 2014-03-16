@@ -8,6 +8,7 @@
 
 #import "CardGameViewController.h"
 #import "PlayingCardDeck.h"
+#import "PlayingCard.h"
 
 @interface CardGameViewController ()
 
@@ -19,10 +20,11 @@
 
 @implementation CardGameViewController
 
+@synthesize deck = _deck;
+
 - (void)setFlipCount:(int)flipCount {
     _flipCount = flipCount;
     self.flipsLabel.text = [NSString stringWithFormat:@"Flips: %d", self.flipCount];
-    NSLog(@"setFlipCount %d\n",self.flipCount);
 }
 
 - (IBAction)touchCardButton:(UIButton *)sender {
@@ -30,13 +32,16 @@
         [sender setBackgroundImage:[UIImage imageNamed:@"back"]
                           forState:UIControlStateNormal];
         [sender setTitle:@"" forState:UIControlStateNormal];
+        self.flipCount++;
     } else {
-        [sender setBackgroundImage:[UIImage imageNamed:@"front"]
-                          forState:UIControlStateNormal];
-        [sender setTitle:[self.deck drawRandomCard].contents forState:UIControlStateNormal];
+        Card *card = [self.deck drawRandomCard];
+        if(card) {
+            [sender setBackgroundImage:[UIImage imageNamed:@"front"]
+                              forState:UIControlStateNormal];
+            [sender setTitle:card.contents forState:UIControlStateNormal];
+        }
+        self.flipCount++;
     }
-    self.flipCount++;   //这里执行了setter函数，所以label能变
-    NSLog(@"touchCardButton %d\n",self.flipCount);
 }
 
 - (PlayingCardDeck *)deck {
@@ -45,8 +50,5 @@
     }
     return _deck;
 }
-
-
-
 
 @end
